@@ -2,13 +2,15 @@ const http = require('http');
 const fs = require('fs');
 const sqlite3 = require('sqlite3');
 
+let isInTest = typeof global.it === 'function';
+
 fs.mkdirSync("storage", { recursive: true })
 
 const SQLite3 = sqlite3.verbose();
 const db = new SQLite3.Database('storage/content.db');
 
 const hostname = '0.0.0.0';
-const port = 80;
+const port = 8080;
 
 let contents = [];
 
@@ -23,6 +25,8 @@ const query = (command, method = 'all') => {
     });
   });
 };
+
+exports.query = query;
 
 db.serialize(async () => {
 	await query("CREATE TABLE IF NOT EXISTS content (content text)", 'run');
@@ -132,6 +136,8 @@ const server = http.createServer((req, res) => {
 
 loadContent();
 
+if (!isInTest) {
 server.listen(port, hostname, () => {
   console.log("Server running at http://${hostname}:${port}/");
 });
+}

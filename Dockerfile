@@ -1,6 +1,6 @@
 FROM node:19-bullseye
 
-EXPOSE 80
+EXPOSE 8080
 
 WORKDIR /var/app
 
